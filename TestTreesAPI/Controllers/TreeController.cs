@@ -8,6 +8,7 @@ using TestTreesAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using TestTreesAPI.DataAccess;
 using TestTreesAPI.Services;
+using TestTreesAPI.Exceptions;
 
 namespace TestTreesAPI.Controllers
 {
@@ -60,7 +61,7 @@ namespace TestTreesAPI.Controllers
             try
             {
                 var parentNode = _treeDbContext.Nodes.Include(x => x.Children).FirstOrDefault(x => x.Id == parentNodeId);
-                if (node == null)
+                if (parentNode == null)
                     throw new SecureException("Parent node wasn't found");
                 if (parentNode.TreeName != treeName)
                     throw new SecureException("Requested parent node was found, but it doesn't belong your tree");
@@ -165,16 +166,6 @@ namespace TestTreesAPI.Controllers
             }
 
             return tree;
-        }
-    }
-
-    public class SecureException : Exception
-    {
-        public Guid EventId { get; set; }
-
-        public SecureException(string message) : base(message)
-        {
-            EventId = Guid.NewGuid();
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TestTreesAPI.DataAccess;
+using TestTreesAPI.Exceptions;
 using TestTreesAPI.Services;
 
 namespace TestTreesAPI.Controllers
