@@ -38,7 +38,7 @@ namespace TestTreesAPI.Controllers
                     var tree = new Node(treeName, treeName, null, true);
 
                     _treeDbContext.Nodes.Add(tree);
-                    _treeDbContext.SaveChanges();
+                    await _treeDbContext.SaveChangesAsync();
                     return Ok(tree);
                 }
 
@@ -60,6 +60,8 @@ namespace TestTreesAPI.Controllers
             try
             {
                 var parentNode = _treeDbContext.Nodes.Include(x => x.Children).FirstOrDefault(x => x.Id == parentNodeId);
+                if (node == null)
+                    throw new SecureException("Parent node wasn't found");
                 if (parentNode.TreeName != treeName)
                     throw new SecureException("Requested parent node was found, but it doesn't belong your tree");
                 if (parentNode != null && parentNode.Children.Any(n => n.Name == nodeName))
@@ -68,7 +70,7 @@ namespace TestTreesAPI.Controllers
                 var node = new Node(nodeName, treeName, parentNodeId, false);
 
                 _treeDbContext.Nodes.Add(node);
-                _treeDbContext.SaveChanges();
+                await _treeDbContext.SaveChangesAsync();
                 return Ok();
             }
             catch (SecureException ex)
@@ -100,7 +102,7 @@ namespace TestTreesAPI.Controllers
                     throw new SecureException("Can't delete node with leaves");
 
                 _treeDbContext.Nodes.Remove(node);
-                _treeDbContext.SaveChanges();
+                await _treeDbContext.SaveChangesAsync();
                 return Ok();
             }
             catch (SecureException ex)
@@ -133,7 +135,7 @@ namespace TestTreesAPI.Controllers
                     throw new SecureException("Duplicate name");
 
                 node.Name = newNodeName;
-                _treeDbContext.SaveChanges();
+                await _treeDbContext.SaveChangesAsync();
 
                 return Ok();
             }
